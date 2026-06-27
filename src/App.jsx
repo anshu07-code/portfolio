@@ -681,7 +681,7 @@ export default function Portfolio() {
     const rect = box.getBoundingClientRect();
     const w = rect.width, h = rect.height;
     const cx = w / 2, cy = h / 2;
-    const r = Math.min(w, h) * 0.45;
+    const r = Math.min(w, h) * 0.4;
     const positions = SKILL_WEB_DATA.map((sk) => {
       const rad = ((sk.angle - 90) * Math.PI) / 180;
       const px = cx + r * Math.cos(rad);
