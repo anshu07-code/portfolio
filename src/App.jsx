@@ -606,7 +606,7 @@ export default function Portfolio() {
   // ─── BACKGROUND + WAVE ANIMATION ───
   useEffect(() => {
     const canvas = skillWebRef.current;
-    const box = skillWebBoxRef.current;
+    const box = canvas?.parentElement;
     if (!canvas || !box) return;
 
     const dpr = window.devicePixelRatio || 1;
@@ -619,8 +619,10 @@ export default function Portfolio() {
     const colors = ["rgba(212,160,48,", "rgba(212,160,48,", "rgba(212,160,48,", "rgba(212,160,48,"];
 
     const draw = () => {
-      const rect = box.getBoundingClientRect();
-      const w = rect.width, h = rect.height;
+      const sectionRect = box.getBoundingClientRect();
+      const webRect = skillWebBoxRef.current?.getBoundingClientRect();
+      if (!webRect) return;
+      const w = sectionRect.width, h = sectionRect.height;
       if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
         canvas.width = w * dpr;
         canvas.height = h * dpr;
@@ -630,8 +632,9 @@ export default function Portfolio() {
       ctx.clearRect(0, 0, w, h);
       time += 0.016;
 
-      const cx = w / 2, cy = h / 2;
-      const maxR = Math.min(w, h) * 0.48;
+      const cx = webRect.left - sectionRect.left + webRect.width / 2;
+      const cy = webRect.top - sectionRect.top + webRect.height / 2;
+      const maxR = Math.min(webRect.width, webRect.height) * 0.48;
 
       // Center glow
       const aura = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
@@ -871,20 +874,20 @@ export default function Portfolio() {
     navLink: { background: "none", border: "none", color: t.muted, cursor: "pointer", padding: "6px 14px", borderRadius: 8, fontSize: 14, transition: "all 0.2s", fontFamily: "inherit" },
     themeToggle: { display: "flex", gap: 4, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: 4 },
     themeBtn: (active) => ({ background: active ? t.accent : "none", border: "none", color: active ? "#fff" : t.muted, cursor: "pointer", padding: "4px 10px", borderRadius: 7, fontSize: 12, transition: "all 0.2s", fontFamily: "inherit" }),
-    hero: { paddingTop: 120, paddingBottom: 80, paddingLeft: "5%", paddingRight: "5%", background: t.heroGrad, minHeight: "100dvh", display: "flex", alignItems: "center" },
+    hero: { paddingTop: isMobile ? 80 : 120, paddingBottom: isMobile ? 60 : 80, paddingLeft: "5%", paddingRight: "5%", background: t.heroGrad, minHeight: "100dvh", display: "flex", alignItems: "center" },
     heroInner: { maxWidth: 1200, margin: "0 auto", width: "100%" },
     badge: { display: "inline-flex", alignItems: "center", gap: 6, background: t.accentGlow, border: `1px solid ${t.accent}44`, borderRadius: 20, padding: "6px 16px", fontSize: 13, color: t.highlight, marginBottom: 24 },
     h1: { fontSize: "clamp(36px,6vw,72px)", fontWeight: 800, lineHeight: 1.1, margin: "0 0 16px", letterSpacing: "-0.02em" },
     gradText: { color: t.highlight },
     heroSub: { fontSize: "clamp(16px,2vw,20px)", color: t.muted, maxWidth: 600, lineHeight: 1.7, marginBottom: 40 },
     btnRow: { display: "flex", gap: 16, flexWrap: "wrap" },
-    btnPrimary: { background: `linear-gradient(90deg, ${t.gradStart}, ${t.gradEnd})`, border: "none", color: "#fff", padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", transition: "opacity 0.2s", fontFamily: "inherit" },
-    btnOutline: { background: "none", border: `1px solid ${t.border}`, color: t.text, padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 500, cursor: "pointer", transition: "all 0.2s", fontFamily: "inherit" },
+    btnPrimary: { background: `linear-gradient(90deg, ${t.gradStart}, ${t.gradEnd})`, border: "none", color: "#fff", padding: isMobile ? "12px 24px" : "14px 32px", borderRadius: 12, fontSize: isMobile ? 14 : 15, fontWeight: 600, cursor: "pointer", transition: "opacity 0.2s", fontFamily: "inherit" },
+    btnOutline: { background: "none", border: `1px solid ${t.border}`, color: t.text, padding: isMobile ? "12px 24px" : "14px 32px", borderRadius: 12, fontSize: isMobile ? 14 : 15, fontWeight: 500, cursor: "pointer", transition: "all 0.2s", fontFamily: "inherit" },
     section: { padding: isMobile ? "56px 5%" : "80px 5%", maxWidth: 1200, margin: "0 auto" },
     sectionLabel: { fontSize: 12, fontWeight: 600, letterSpacing: "0.15em", color: t.accent, textTransform: "uppercase", marginBottom: 12 },
-    sectionTitle: { fontSize: "clamp(28px,4vw,40px)", fontWeight: 700, marginBottom: 48, letterSpacing: "-0.02em" },
-    card: { background: t.card, border: `1px solid ${t.border}`, borderRadius: 16, padding: 28, transition: "border-color 0.2s, transform 0.2s" },
-    expCard: { background: t.card, border: `1px solid ${t.border}`, borderRadius: 16, padding: 28, marginBottom: 24, position: "relative", overflow: "hidden" },
+    sectionTitle: { fontSize: "clamp(28px,4vw,40px)", fontWeight: 700, marginBottom: isMobile ? 32 : 48, letterSpacing: "-0.02em" },
+    card: { background: t.card, border: `1px solid ${t.border}`, borderRadius: 16, padding: isMobile ? 20 : 28, transition: "border-color 0.2s, transform 0.2s" },
+    expCard: { background: t.card, border: `1px solid ${t.border}`, borderRadius: 16, padding: isMobile ? 20 : 28, marginBottom: isMobile ? 16 : 24, position: "relative", overflow: "hidden" },
     expAccent: { position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: `linear-gradient(180deg, ${t.gradStart}, ${t.gradEnd})` },
     tag: { display: "inline-block", background: t.accentGlow, border: `1px solid ${t.accent}33`, color: t.highlight, borderRadius: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, margin: "4px 4px 4px 0" },
     statGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px,1fr))", gap: 16, marginBottom: 48 },
@@ -897,14 +900,14 @@ export default function Portfolio() {
     tabRow: { display: "flex", gap: 0, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: 4, marginBottom: 32, width: "fit-content" },
     tabBtn: (active) => ({ background: active ? t.accent : "none", border: "none", color: active ? "#fff" : t.muted, padding: "8px 24px", borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 500, transition: "all 0.2s", fontFamily: "inherit" }),
     contactGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px,1fr))", gap: 20 },
-    contactCard: { background: t.card, border: `1px solid ${t.border}`, borderRadius: 16, padding: 28, display: "flex", flexDirection: "column", gap: 10, position: "relative", overflow: "hidden", transition: "all 0.3s ease", cursor: "default" },
+    contactCard: { background: t.card, border: `1px solid ${t.border}`, borderRadius: 16, padding: isMobile ? 20 : 28, display: "flex", flexDirection: "column", gap: 10, position: "relative", overflow: "hidden", transition: "all 0.3s ease", cursor: "default" },
     contactCardAccent: { position: "absolute", left: 0, top: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${t.gradStart}, ${t.gradEnd})`, opacity: 0.8 },
     contactIcon: { width: 48, height: 48, borderRadius: 14, background: `linear-gradient(135deg, ${t.gradStart}, ${t.gradEnd})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 8, boxShadow: `0 4px 12px ${t.accentGlow}` },
     divider: { border: "none", borderTop: `1px solid ${t.border}`, margin: "0" },
     footer: { background: t.surface, borderTop: `1px solid ${t.border}`, padding: "32px 5%", textAlign: "center", color: t.muted, fontSize: 13 },
     // Chat
-    chatFab: { position: "fixed", bottom: 32, right: 32, width: 56, height: 56, borderRadius: "50%", background: `linear-gradient(135deg, ${t.gradStart}, ${t.gradEnd})`, border: "none", color: "#fff", fontSize: 24, cursor: "pointer", boxShadow: `0 4px 24px ${t.accentGlow}`, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.2s" },
-    chatWindow: { position: "fixed", bottom: 100, right: 32, width: 360, maxHeight: 520, background: t.card, border: `1px solid ${t.border}`, borderRadius: 20, display: "flex", flexDirection: "column", zIndex: 200, overflow: "hidden", boxShadow: `0 8px 40px rgba(0,0,0,0.4)` },
+    chatFab: { position: "fixed", bottom: isMobile ? 20 : 32, right: isMobile ? 20 : 32, width: 56, height: 56, borderRadius: "50%", background: `linear-gradient(135deg, ${t.gradStart}, ${t.gradEnd})`, border: "none", color: "#fff", fontSize: 24, cursor: "pointer", boxShadow: `0 4px 24px ${t.accentGlow}`, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.2s" },
+    chatWindow: { position: "fixed", bottom: 100, right: isMobile ? 12 : 32, width: isMobile ? "calc(100vw - 24px)" : 360, maxWidth: 400, maxHeight: 520, background: t.card, border: `1px solid ${t.border}`, borderRadius: 20, display: "flex", flexDirection: "column", zIndex: 200, overflow: "hidden", boxShadow: `0 8px 40px rgba(0,0,0,0.4)` },
     chatHeader: { padding: "16px 20px", background: `linear-gradient(90deg, ${t.gradStart}, ${t.gradEnd})`, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" },
     chatBody: { flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 12, maxHeight: 340 },
     chatBubble: (isUser) => ({ background: isUser ? `linear-gradient(90deg, ${t.gradStart}, ${t.gradEnd})` : t.surface, color: isUser ? "#fff" : t.text, padding: "10px 14px", borderRadius: isUser ? "16px 16px 4px 16px" : "16px 16px 16px 4px", fontSize: 13, lineHeight: 1.5, maxWidth: "85%", alignSelf: isUser ? "flex-end" : "flex-start", border: isUser ? "none" : `1px solid ${t.border}` }),
@@ -913,7 +916,7 @@ export default function Portfolio() {
     chatSend: { background: `linear-gradient(90deg, ${t.gradStart}, ${t.gradEnd})`, border: "none", color: "#fff", borderRadius: 10, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontFamily: "inherit" },
     // Skill modal
     skillOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" },
-    skillModal: { background: "#0c0c18", border: "1px solid rgba(212,160,48,0.2)", borderRadius: 24, padding: 44, maxWidth: 560, width: "100%", position: "relative", boxShadow: "0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,160,48,0.05)" },
+    skillModal: { background: "#0c0c18", border: "1px solid rgba(212,160,48,0.2)", borderRadius: 24, padding: isMobile ? 28 : 44, maxWidth: 560, width: "100%", position: "relative", boxShadow: "0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,160,48,0.05)" },
     skillModalIcon: { width: 60, height: 60, borderRadius: 18, background: "rgba(212,160,48,0.1)", border: "1px solid rgba(212,160,48,0.2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20, boxShadow: "0 0 24px rgba(212,160,48,0.06)" },
   };
 
@@ -1171,7 +1174,7 @@ export default function Portfolio() {
       <hr style={s.divider} />
 
       {/* ─── ABOUT / STATS ─── */}
-      <section id="about" style={{ padding: "80px 5%" }}>
+      <section id="about" style={{ padding: isMobile ? "56px 5%" : "80px 5%" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={s.sectionLabel}>About Me</p>
           <h2 style={s.sectionTitle}>The Story So Far</h2>
@@ -1206,7 +1209,7 @@ export default function Portfolio() {
       <hr style={s.divider} />
 
       {/* ─── EXPERIENCE ─── */}
-      <section id="experience" style={{ padding: "80px 5%" }}>
+      <section id="experience" style={{ padding: isMobile ? "56px 5%" : "80px 5%" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={s.sectionLabel}>Work History</p>
           <h2 style={s.sectionTitle}>Experience</h2>
@@ -1238,7 +1241,8 @@ export default function Portfolio() {
       <hr style={s.divider} />
 
       {/* ─── SKILLS ─── */}
-      <section id="skills" style={{ padding: "80px 5%", position: "relative", overflow: "hidden" }}>
+      <section id="skills" style={{ padding: isMobile ? "56px 5%" : "80px 5%", position: "relative", overflow: "hidden" }}>
+        <canvas ref={skillWebRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
         <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
           <p style={s.sectionLabel}>Capabilities</p>
           <h2 style={{ ...s.sectionTitle, marginBottom: 8 }}>The Skill Web</h2>
@@ -1270,10 +1274,7 @@ export default function Portfolio() {
               ))}
             </div>
           ) : (
-          <div ref={skillWebBoxRef} style={{ position: "relative", width: "100%", height: "clamp(420px, 52vw, 780px)", marginBottom: 48 }}>
-            {/* Background canvas (particles + waves) */}
-            <canvas ref={skillWebRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
-
+          <div ref={skillWebBoxRef} style={{ position: "relative", width: "100%", height: "clamp(420px, 54vw, 800px)", marginBottom: 48, zIndex: 2 }}>
             {/* SVG Connection Web */}
             {skillWebDims.cx > 0 && (
               <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
@@ -1439,15 +1440,15 @@ export default function Portfolio() {
       <hr style={s.divider} />
 
       {/* ─── EDUCATION ─── */}
-      <section id="education" style={{ padding: "80px 5%" }}>
+      <section id="education" style={{ padding: isMobile ? "56px 5%" : "80px 5%" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={s.sectionLabel}>Academic Background</p>
           <h2 style={s.sectionTitle}>Education</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px,1fr))", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? "240px" : "280px"},1fr))`, gap: isMobile ? 16 : 20 }}>
             {RESUME_DATA.education.map((edu, i) => (
               <div key={i} style={{ ...s.card, borderTop: `3px solid ${t.accent}` }}>
                 <div style={{ fontSize: 12, color: t.muted, marginBottom: 8 }}>{edu.period}</div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, margin: "0 0 8px" }}>{edu.degree}</h3>
+                <h3 style={{ fontSize: isMobile ? 15 : 16, fontWeight: 700, marginBottom: 8, margin: "0 0 8px" }}>{edu.degree}</h3>
                 <p style={{ color: t.muted, fontSize: 13, margin: 0 }}>{edu.institution}</p>
               </div>
             ))}
@@ -1458,7 +1459,7 @@ export default function Portfolio() {
       <hr style={s.divider} />
 
       {/* ─── TRAVEL DUMPS ─── */}
-      {showTravel && (<section id="travel" style={{ padding: "80px 5%" }}>
+      {showTravel && (<section id="travel" style={{ padding: isMobile ? "56px 5%" : "80px 5%" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={s.sectionLabel}>Life Beyond Work</p>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 32 }}>
@@ -1469,7 +1470,7 @@ export default function Portfolio() {
               </svg>
               Travel Dumps
             </h2>
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
               {!isAdmin ? (
                 <button style={{ background: "none", border: `1px solid ${t.border}`, color: t.muted, borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontSize: 12, fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6 }}
                   onClick={() => setShowAdminLogin(true)}>
@@ -1949,7 +1950,7 @@ export default function Portfolio() {
       <hr style={s.divider} />
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" style={{ padding: "80px 5%", position: "relative", overflow: "hidden" }}>
+      <section id="contact" style={{ padding: isMobile ? "56px 5%" : "80px 5%", position: "relative", overflow: "hidden" }}>
         <canvas ref={networkCanvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", opacity: 1 }} />
         <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
           <p style={s.sectionLabel}>Let's Connect</p>
